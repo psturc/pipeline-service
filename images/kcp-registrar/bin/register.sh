@@ -252,7 +252,7 @@ add_ca_cert_to_syncer_manifest() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         base64_wrap_flag_name="--break"
     fi
-    ca_cert="$(openssl s_client -showcerts -servername "${servername}" -connect "${host}" </dev/null 2>/dev/null | openssl x509 | base64 $base64_wrap_flag_name 0)"
+    ca_cert="$(openssl s_client -showcerts -servername "${servername}" -connect "${host}" 2>/dev/null | openssl x509 | base64 $base64_wrap_flag_name 0)"
     ca_cert="${ca_cert}" yq -i '(select(.stringData.kubeconfig != null)) .stringData.kubeconfig |= (fromyaml | .clusters[].cluster."certificate-authority-data" = env(ca_cert) | to_yaml)' "${manifest}"
 }
 
